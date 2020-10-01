@@ -30,6 +30,26 @@ services:
     networks:
       - elastic
 
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:7.9.2
+    volumes:
+    #   - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./elastic/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ES_HOST: "es01"
+      ES_PORT: "9200"
+      JIRA_BASE_PATH: ${JIRA_BASE_PATH}
+      JIRA_PROJECT: ${JIRA_PROJECT}
+      JIRA_USER: ${JIRA_USER}
+      JIRA_PASSWORD: ${JIRA_PASSWORD}
+      JIRA_MAX_RESULT: 1
+    networks:
+      - elastic
+
 volumes:
   data01:
     driver: local
