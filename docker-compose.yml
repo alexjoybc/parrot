@@ -43,10 +43,27 @@ services:
       ES_HOST: "es01"
       ES_PORT: "9200"
       JIRA_BASE_PATH: ${JIRA_BASE_PATH}
-      JIRA_PROJECT: ${JIRA_PROJECT}
+      JIRA_JQL: ${JIRA_JQL}
       JIRA_USER: ${JIRA_USER}
       JIRA_PASSWORD: ${JIRA_PASSWORD}
-      JIRA_MAX_RESULT: 1
+      JIRA_MAX_RESULT: 1000
+    networks:
+      - elastic
+  
+  git-logstash:
+    image: docker.elastic.co/logstash/logstash-oss:7.9.2
+    volumes:
+    #   - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./elastic/logstash/gitpipeline:/usr/share/logstash/pipeline:ro
+    restart: always
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ES_HOST: "es01"
+      ES_PORT: "9200"
+      GIT_ORG: ${GIT_ORG}
+      GIT_REPO: ${GIT_REPO}
+      PROJECT: ${PROJECT}
+      JIRA_MAX_RESULT: 1000
     networks:
       - elastic
 
